@@ -1,0 +1,7 @@
+# Sublime Text 2/3
+*.sublime-*
+
+# Erlang & Elixir
+erl_crash.dump
+/_build
+/_deps
