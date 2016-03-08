@@ -30,7 +30,7 @@ defmodule Bamboo.SendgridAdapter do
   defmodule ApiError do
     defexception [:message]
 
-    def exception(%{params: params, response: response} = response) do
+    def exception(%{params: params, response: response}) do
       %ApiError{message: """
       There was a problem sending the email through Sendgrid's API.
 
@@ -46,12 +46,12 @@ defmodule Bamboo.SendgridAdapter do
   end
 
   def deliver(email, config) do
-    params = convert_to_sendgrid_params(email)
+    params = convert_to_sendgrid_params(email) |> Poison.encode!
     case post!("/mail.send.json", headers(config), params) do
       %{status_code: 200} = response ->
-        raise ApiError, %{params: params, response: response}
+        :ok
       response ->
-        response
+        raise ApiError, %{params: params, response: response}
     end
   end
 
@@ -71,7 +71,7 @@ defmodule Bamboo.SendgridAdapter do
 
   defp add_headers(params, email) do
     Map.merge(params, %{
-      headers: Poison.encode(email.headers)
+      headers: Poison.encode!(email.headers)
     })
   end
 
@@ -111,12 +111,16 @@ defmodule Bamboo.SendgridAdapter do
     })
   end
 
-  @base "https://api.sendgrid.com/api"
+  @default_base_uri "https://api.sendgrid.com/api"
+
+  defp base_uri do
+    Application.get_env(:bamboo, :sendgrid_base_uri) || @default_base_uri
+  end
 
   defp headers(config) do
     authorization =
-      case authorization(config) do
-        {:basic, token}  ->  "Basic #{token}"
+      case authorization!(config) do
+        {:basic, token}  -> "Basic #{token}"
         {:bearer, token} -> "Bearer #{token}"
       end
 
@@ -127,38 +131,56 @@ defmodule Bamboo.SendgridAdapter do
   defp authorization(config) do
     case config[:api_key] do
       api_key when is_binary(api_key) ->
-        {:bearer, api_key}
+        {:ok, :bearer, api_key}
+      api_key when not(is_nil(api_key)) ->
+        {:error, :malformed_api_key}
       _ ->
         case {config[:username], config[:password]} do
           {username, password} when is_binary(username) and is_binary(password) ->
-            {:basic, Base.url_encode64("#{username}:#{password}")}
+            {:ok, :basic, Base.url_encode64("#{username}:#{password}")}
+          {username, password} when not (is_nil(username) and is_nil(password)) ->
+            {:error, :malformed_username_or_password}
+          {nil, password} when not is_nil(password) ->
+            {:error, :no_username}
+          {username, nil} when not is_nil(username) ->
+            {:error, :no_password}
           _ ->
-            nil
+            {:error, :no_credentials}
         end
     end
   end
 
+  @reasons_to_humane %{
+    no_credentials: "You did not provide any credentials.",
+    malformed_api_key: "You provided a malformed API key.",
+    no_username: "You did not provide a username.",
+    no_password: "You did not provide a password.",
+    malformed_username_or_password: "You provided a malformed username and/or password."
+  }
+
   defp authorization!(config) do
     case authorization(config) do
-      nil ->
+      {:ok, type, token} ->
+        {type, token}
+      {:error, reason} ->
         # TODO(mtwilliams): Use edit distance to identify misspellings.
         raise ArgumentError, """
-        You failed to provide credentials for your Sendgrid adapter!
+        You've misconfigured your Bamboo.SendgridAdapter!
+
+        #{@reasons_to_humane[reason]}
 
         Here is the configuration that was passed in:
 
         #{inspect config, limit: :infinity}
         """
-      authorization ->
-        authorization
     end
   end
 
-  defp options!(path, headers, params), do: HTTPoison.head!(@base <> path, headers, params: params)
-  defp head!(path, headers, params), do: HTTPoison.head!(@base <> path, headers, params: params)
-  defp get!(path, headers, params), do: HTTPoison.get!(@base <> path, headers, params: params)
-  defp put!(path, headers, params), do: HTTPoison.post!(@base <> path, params, headers)
-  defp post!(path, headers, params), do: HTTPoison.post!(@base <> path, params, headers)
-  defp patch!(path, headers, params), do: HTTPoison.post!(@base <> path, params, headers)
-  defp delete!(path, headers, params), do: HTTPoison.post!(@base <> path, headers, params: params)
+  defp options!(path, headers, params), do: HTTPoison.head!(base_uri <> path, headers, params: params)
+  defp head!(path, headers, params), do: HTTPoison.head!(base_uri <> path, headers, params: params)
+  defp get!(path, headers, params), do: HTTPoison.get!(base_uri <> path, headers, params: params)
+  defp put!(path, headers, params), do: HTTPoison.post!(base_uri <> path, params, headers)
+  defp post!(path, headers, params), do: HTTPoison.post!(base_uri <> path, params, headers)
+  defp patch!(path, headers, params), do: HTTPoison.post!(base_uri <> path, params, headers)
+  defp delete!(path, headers, params), do: HTTPoison.post!(base_uri <> path, headers, params: params)
 end

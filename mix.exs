@@ -6,6 +6,7 @@ defmodule BambooUsingSendgrid.Mixfile do
      name: "Bamboo Using Sendgrid",
      version: version,
      elixir: "~> 1.2",
+     elixirc_paths: elixirc_paths(Mix.env),
      description: "A SendGrid adapter for Bamboo.",
      homepage_url: "https://github.com/mtwilliams/bamboo-using-sendgrid",
      source_url: "https://github.com/mtwilliams/bamboo-using-sendgrid",
@@ -38,9 +39,16 @@ defmodule BambooUsingSendgrid.Mixfile do
      licenses: ["Public Domain"]]
   end
 
+  defp elixirc_paths(:test), do: elixirc_paths ++ ["test/mocks"]
+  defp elixirc_paths(_), do: elixirc_paths
+  defp elixirc_paths, do: ["lib"]
+
   defp deps do
-    [bamboo:    "~> 0.3.0",
-     httpoison: "~> 0.8"]
+    [{:bamboo,    "~> 0.3.0"},
+     {:httpoison, "~> 0.8"},
+     {:poison,    "~> 1.5"},
+     {:plug,      "~> 1.0", only: [:test]},
+     {:cowboy,    "~> 1.0", only: [:test]}]
   end
 
   defp aliases do
