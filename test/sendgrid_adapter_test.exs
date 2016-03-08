@@ -71,7 +71,8 @@ defmodule Bamboo.SendgridAdapterTest do
   end
 
   test "deliver/2 sends to the right url" do
-    flunk "Test not written yet."
+    SendgridAdapter.deliver(@email, @config_with_valid_api_key)
+    assert_receive {:mock, :ok, %{request_path: "/mail.send.json"}}
   end
 
   test "deliver/2 sends headers, sender, recipients, subject, and body" do
