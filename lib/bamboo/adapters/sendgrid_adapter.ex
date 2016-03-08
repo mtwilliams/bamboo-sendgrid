@@ -90,8 +90,8 @@ defmodule Bamboo.SendgridAdapter do
   end
 
   defp add_recipients_of_type(params, recipients, type: type) do
-    names = Enum.filter(recipients, &(elem(&1, 0)))
-    emails = Enum.filter(recipients, &(elem(&1, 0)))
+    names = Enum.map(recipients, &(elem(&1, 0)))
+    emails = Enum.map(recipients, &(elem(&1, 1)))
 
     params
     |> Map.put(:"#{type}", emails)
