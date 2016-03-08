@@ -4,7 +4,7 @@
 
 ## Usage
 
-Refer to `lib/bamboo/adapters/sendgrid_adapter.ex` or run `h Bamboo.SendgridAdapter.`
+Refer to `lib/bamboo/adapters/sendgrid_adapter.ex` or run `h Bamboo.SendgridAdapter`.
 
 ## Testing
 

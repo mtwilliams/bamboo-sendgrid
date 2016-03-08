@@ -63,9 +63,9 @@ defmodule Bamboo.Test.MockSendgrid do
   defp req_is_well_formed(%Plug.Conn{} = conn) do
     Enum.all?([
       sender_is_well_formed(conn.params),
-      recipents_are_well_formed(:to, conn.params),
-      recipents_are_well_formed(:cc, conn.params),
-      recipents_are_well_formed(:bcc, conn.params),
+      recipients_are_well_formed(:to, conn.params),
+      recipients_are_well_formed(:cc, conn.params),
+      recipients_are_well_formed(:bcc, conn.params),
       subject_is_well_formed(conn.params),
       body_is_well_formed(conn.params)
     ])
@@ -82,7 +82,7 @@ defmodule Bamboo.Test.MockSendgrid do
     end
   end
 
-  defp recipents_are_well_formed(type, %{} = email) do
+  defp recipients_are_well_formed(type, %{} = email) do
     names = Map.get(email, "#{type}name")
     emails = Map.get(email, Atom.to_string(type))
     case {names, emails} do
