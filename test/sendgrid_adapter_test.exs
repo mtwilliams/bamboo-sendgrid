@@ -19,7 +19,8 @@ defmodule Bamboo.SendgridAdapterTest do
   @email Email.new_email(from: "john@doe.com",
                          to: "jane@doe.com",
                          subject: "Who are you?",
-                         text_body: "Who who, who who?")
+                         text_body: "Who who, who who?",
+                         html_body: "<i>Who who, who who?</i>")
          |> Bamboo.Mailer.normalize_addresses
 
   setup do
@@ -76,7 +77,22 @@ defmodule Bamboo.SendgridAdapterTest do
   end
 
   test "deliver/2 sends headers, sender, recipients, subject, and body" do
-    flunk "Test not written yet."
+    email = @email |> Email.put_header("Reply-To", "jonny@cena.com")
+    email |> SendgridAdapter.deliver(@config_with_valid_api_key)
+
+    headers = email.headers |> Poison.encode!
+    subject = email.subject
+    text = email.text_body
+    html = email.html_body
+
+    assert_receive({:mock, :ok, %{params: %{
+      "headers" => headers,
+      "to" => ["jane@doe.com"],
+      "from" => "john@doe.com",
+      "subject" => subject,
+      "text" => text,
+      "html" => html
+    }}})
   end
 
   test "deliver/2 correctly formats recipients" do
