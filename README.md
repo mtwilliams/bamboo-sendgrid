@@ -16,7 +16,7 @@ TODO
 
     ```elixir
     def deps do
-      [{:bamboo_sendgrid, "~> 0.0.0"}]
+      [{:bamboo_sendgrid, "~> 0.1"}]
     end
     ```
 
