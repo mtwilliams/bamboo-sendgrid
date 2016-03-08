@@ -1,1 +1,14 @@
-# TODO(mtwilliams): Setup Travis-CI based testing.
+language: elixir
+elixir:
+  - 1.2.3
+otp_release:
+  - 18.2
+sudo: false
+script:
+  - mix test
+notifications:
+  email:
+    recipients:
+      - m.t.williams@live.com
+    on_success: success
+    on_failure: change
