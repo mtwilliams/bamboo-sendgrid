@@ -80,6 +80,19 @@ defmodule Bamboo.SendgridAdapterTest do
   end
 
   test "deliver/2 correctly formats recipients" do
-    flunk "Test not written yet."
+    @email
+    |> Map.put(:to, [{"John Cena", "jonny@cena.com"}])
+    |> Map.put(:cc, [{"Big Sister", "cc@nsa.gov"}])
+    |> Map.put(:bcc, [{"Big Brother", "bcc@nsa.gov"}])
+    |> SendgridAdapter.deliver(@config_with_valid_api_key)
+
+    assert_receive({:mock, :ok, %{params: %{
+      "toname" => ["John Cena"],
+      "to" => ["jonny@cena.com"],
+      "ccname" => ["Big Sister"],
+      "cc" => ["cc@nsa.gov"],
+      "bccname" => ["Big Brother"],
+      "bcc" => ["bcc@nsa.gov"]
+    }}})
   end
 end
