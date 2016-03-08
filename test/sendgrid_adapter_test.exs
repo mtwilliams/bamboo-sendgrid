@@ -16,7 +16,10 @@ defmodule Bamboo.SendgridAdapterTest do
   @config_with_valid_username_and_password %{adapter: SendgridAdapter, username: "VALID_USERNAME", password: "VALID_PASSWORD"}
   @config_with_invalid_username_and_password %{adapter: SendgridAdapter, username: "INVALID_USERNAME", password: "INVALID_PASSWORD"}
 
-  @email Email.new_email(from: "john@doe.com", to: "jane@doe.com")
+  @email Email.new_email(from: "john@doe.com",
+                         to: "jane@doe.com",
+                         subject: "Who are you?",
+                         text_body: "Who who, who who?")
          |> Bamboo.Mailer.normalize_addresses
 
   setup do
