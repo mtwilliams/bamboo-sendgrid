@@ -7,7 +7,7 @@ defmodule Bamboo.SendgridAdapter do
   [Bamboo.SendgridEmail](Bamboo.SendgridEmail.html) for helpers that can be
   used by the SendgridAdapter to do things like categorizing.
 
-  ## Example config
+  ## Usage
 
       # In config/config.exs, or config/prod.exs, etc.
       config :my_app, MyApp.Mailer,

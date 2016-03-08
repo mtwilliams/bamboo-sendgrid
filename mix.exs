@@ -1,15 +1,15 @@
-defmodule BambooUsingSendgrid.Mixfile do
+defmodule BambooSendgrid.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :bamboo_using_sendgrid,
-     name: "Bamboo Using Sendgrid",
+    [app: :bamboo_sendgrid,
+     name: "Sendgrid for Bamboo",
      version: version,
      elixir: "~> 1.2",
      elixirc_paths: elixirc_paths(Mix.env),
      description: "A SendGrid adapter for Bamboo.",
-     homepage_url: "https://github.com/mtwilliams/bamboo-using-sendgrid",
-     source_url: "https://github.com/mtwilliams/bamboo-using-sendgrid",
+     homepage_url: "https://github.com/mtwilliams/sendgrid-with-bamboo",
+     source_url: "https://github.com/mtwilliams/sendgrid-with-bamboo",
      deps_path: "_deps",
      lockfile: "mix.lock",
      build_embedded: Mix.env == :prod,
