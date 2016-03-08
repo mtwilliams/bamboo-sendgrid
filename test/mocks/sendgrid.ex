@@ -24,7 +24,7 @@ defmodule Bamboo.Test.MockSendgrid do
     case {req_is_authorized(conn), req_is_well_formed(conn)} do
       {true, true} ->
         conn = respond_with_success(conn)
-        send(parent, {:mock, :ok})
+        send(parent, {:mock, :ok, conn})
         conn
       {true, false} ->
         conn = respond_with_error(conn)
