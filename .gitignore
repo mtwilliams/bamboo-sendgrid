@@ -5,3 +5,4 @@
 erl_crash.dump
 /_build
 /_deps
+/docs

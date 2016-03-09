@@ -16,7 +16,8 @@ defmodule BambooSendgrid.Mixfile do
      start_permanent: Mix.env == :prod,
      package: package,
      deps: deps,
-     aliases: aliases]
+     aliases: aliases,
+     docs: docs]
   end
 
   def application do
@@ -36,7 +37,8 @@ defmodule BambooSendgrid.Mixfile do
 
   defp package do
     [maintainers: ["Michael Williams"],
-     licenses: ["Public Domain"]]
+     licenses: ["Public Domain"],
+     links: %{"GitHub" => "https://github.com/mtwilliams/bamboo-sendgrid"}]
   end
 
   defp elixirc_paths(:test), do: elixirc_paths ++ ["test/mocks"]
@@ -47,11 +49,25 @@ defmodule BambooSendgrid.Mixfile do
     [{:bamboo,    "~> 0.3.0"},
      {:httpoison, "~> 0.8"},
      {:poison,    "~> 1.5"},
-     {:plug,      "~> 1.0", only: [:test]},
-     {:cowboy,    "~> 1.0", only: [:test]}]
+
+     # Testing
+     {:plug,      "~> 1.0", only: :test},
+     {:cowboy,    "~> 1.0", only: :test},
+
+     # Documentation
+     {:ex_doc,    "~> 0.10",  only: :docs},
+     {:earmark,   "~> 0.1",   only: :docs},
+     {:inch_ex,   ">= 0.0.0", only: :docs}]
   end
 
   defp aliases do
     []
+  end
+
+  defp docs do
+    [main: "Bamboo.SendgridAdapter",
+     canonical: "http://hexdocs.pm/bamboo-sendgrid",
+     source_url: "https://github.com/mtwilliams/bamboo-sendgrid",
+     source_ref: version]
   end
 end
