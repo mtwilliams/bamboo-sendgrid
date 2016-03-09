@@ -2,6 +2,7 @@
 
 [![Continuous Integration](https://img.shields.io/travis/mtwilliams/bamboo-sendgrid/master.svg)](https://travis-ci.org/mtwilliams/bamboo-sendgrid)
 [![Documentation](http://inch-ci.org/github/mtwilliams/bamboo-sendgrid.svg)](http://inch-ci.org/github/mtwilliams/bamboo-sendgrid)
+[![Package](https://img.shields.io/hexpm/dt/bamboo_sendgrid.svg)](https://hex.pm/packages/bamboo_sendgrid)
 
 :bamboo: A SendGrid adapter for [Paul Smith's great emailer.](https://github.com/paulcsmith/bamboo)
 
